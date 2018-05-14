@@ -1,7 +1,6 @@
 #include <iostream>
 #include <vector>
 #include "vector.h"
-
 int main()
 {
     std::vector<int> v {};
@@ -24,7 +23,6 @@ int main()
     << ", capacity yra " << v.capacity() << "\n";
     std::cout << "Vector size yra " << V.size()
     << ", capacity yra " << V.capacity() << "\n";
-
     
 //    v.clear();
 //    V.clear();
@@ -35,4 +33,5 @@ int main()
 //    << ", capacity yra " << v.capacity() << "\n";
 //    std::cout << "Vector size yra " << V.size()
 //    << ", capacity yra " << V.capacity() << "\n";
+    
 }

@@ -42,6 +42,7 @@ public:
     std::reverse_iterator<T *> rend();
     size_t max_size() const;
     void shrink_to_fit();
+    void swap(Vector& other);
 };
 
 template<class T>
@@ -145,8 +146,8 @@ void Vector<T>::reserve(size_t new_cap)
 template<class T>
 void Vector<T>::resize(size_t count)
 {
-        size_=count;
-        reallocate();
+    size_=count;
+    reallocate();
 }
 
 template<class T>
@@ -200,5 +201,21 @@ size_t Vector<T>::max_size() const
 template <typename T>
 void Vector<T>::shrink_to_fit()
 {capacity_ = size_;}
+
+template <typename T>
+void Vector<T>::swap(Vector<T> &v2)
+{
+    auto size_2 = size_,
+    capacity_2 = capacity_;
+    T *telem = elem;
+    
+    size_ = v2.size_;
+    capacity_ = v2.capacity_;
+    elem = v2.elem;
+    
+    v2.size_ = size_2;
+    v2.capacity_ = capacity_2;
+    v2.elem = telem;
+}
 
 #endif
