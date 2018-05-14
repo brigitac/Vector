@@ -25,7 +25,8 @@ public:
     const T& operator[](size_t i) const;
     Vector(std::initializer_list<T> il);
     ~Vector() {delete[] elem;}
-    void push_back(const T& skaicius);
+    void push_back(const T& value);
+    void push_back(T&& value);
     void pop_back();
     bool empty() const;
     const T* begin() const;
@@ -91,17 +92,25 @@ Vector<T>::Vector(const Vector& v) :elem{new T[v.size_]}, size_{v.size_}
 }
 
 template<class T>
-void Vector<T>::push_back(const T& skaicius)
+void Vector<T>::push_back(const T& value)
 {
     if (capacity_==0) {capacity_=1;}
     if (size_==capacity_) {capacity_=2*capacity_;}
     size_++;
-    T* elem2 = new T [size_];
-    std::copy (elem, elem + size_, elem2);
-    elem2[size_-1]=skaicius;
-    delete[] elem;
-    elem = elem2;
+    reallocate();
+    elem[size_-1]=value;
 }
+
+template<class T>
+void Vector<T>::push_back(T &&value)
+{
+    if (capacity_==0) {capacity_=1;}
+    if (size_==capacity_) {capacity_=2*capacity_;}
+    size_++;
+    reallocate();
+    elem[size_-1]=value;
+}
+
 template<class T>
 const T* Vector<T>::begin() const
 {return elem;}
