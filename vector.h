@@ -30,18 +30,15 @@ public:
     void push_back(T&& value);
     void pop_back();
     bool empty() const;
-    const T* begin() const;
-    const T* end() const;
     void reserve(size_t new_cap );
     void resize(size_t count);
     void resize( size_t count, const T& value );
     void clear();
     void reallocate();
-    std::reverse_iterator<T *> rend();
     size_t max_size() const;
     void shrink_to_fit();
     void swap(Vector& other);
-    //element access
+    // Element Access
     T& at(size_t pos);
     const T& at(size_t pos) const;
     T& operator[](size_t i);
@@ -52,6 +49,19 @@ public:
     const T& back() const;
     T * data() noexcept;
     const T * data() const noexcept;
+    // Iterators
+    T* begin() noexcept;
+    const T* begin() const noexcept;
+    const T* cbegin() const noexcept;
+    T* end() noexcept;
+    const T* end() const noexcept;
+    const T* cend() const noexcept;
+    std::reverse_iterator<T*>   rbegin() noexcept;
+    std::reverse_iterator<const T*> rbegin() const noexcept;
+    std::reverse_iterator<const T*>  crbegin() const noexcept;
+    std::reverse_iterator<T*> rend() noexcept;
+    std::reverse_iterator<const T*> rend() const noexcept;
+    std::reverse_iterator<const T*> crend() const noexcept;
 };
 
 template<class T>
@@ -112,14 +122,6 @@ void Vector<T>::push_back(T &&value)
 }
 
 template<class T>
-const T* Vector<T>::begin() const
-{return elem;}
-
-template<class T>
-const T* Vector<T>::end() const
-{return elem + size();}
-
-template<class T>
 bool Vector<T>::empty() const
 {return begin() == end();}
 
@@ -165,9 +167,9 @@ void Vector<T>::resize( size_t count, const T& value )
 template <typename T>
 void Vector<T>::clear()
 {
-     for (auto i = 0; i < size_; ++i)
+    for (auto i = 0; i < size_; ++i)
         elem[i].~T();
-//    delete[] elem; //kodel neleidzia istrinti?
+//  delete[] elem; //kodel neleidzia istrinti?
     size_ = 0;
 }
 
@@ -179,10 +181,6 @@ void Vector<T>::reallocate()
     delete[] elem;
     elem=elem2;
 }
-
-template <typename T>
-std::reverse_iterator<T *> Vector<T>::rend()
-{ return std::reverse_iterator<T *>(elem);}
 
 template <typename T>
 size_t Vector<T>::max_size() const
@@ -209,7 +207,7 @@ void Vector<T>::swap(Vector<T> &v2)
     v2.elem = telem;
 }
 
-//element access
+// Element Access
 template<class T>
 T& Vector<T>::at(size_t pos)
 {
@@ -255,5 +253,54 @@ T* Vector<T>::data() noexcept
 template<typename T>
 const T* Vector<T>::data() const noexcept
 {return elem;}
+
+// Iterators
+template<class T>
+T* Vector<T>::begin() noexcept
+{return elem;}
+
+template<class T>
+const T* Vector<T>::begin() const noexcept
+{return elem;}
+
+template<class T>
+const T* Vector<T>::cbegin() const noexcept
+{return elem;}
+
+template<class T>
+T* Vector<T>::end() noexcept
+{return elem + size();}
+
+template<class T>
+const T* Vector<T>::end() const noexcept
+{return elem + size();}
+
+template<class T>
+const T* Vector<T>::cend() const noexcept
+{return elem + size();}
+
+template<class T>
+std::reverse_iterator<T*> Vector<T>:: rbegin() noexcept
+{return std::reverse_iterator<T*>(elem + size_);}
+
+template<class T>
+std::reverse_iterator<const T*> Vector<T>:: rbegin() const noexcept
+{return std::reverse_iterator<T *>(elem + size_);}
+
+template<class T>
+std::reverse_iterator<const T*> Vector<T>:: crbegin() const noexcept
+{return std::reverse_iterator<T *>(elem + size_);}
+
+template <typename T>
+std::reverse_iterator<T*> Vector<T>::rend() noexcept
+{return std::reverse_iterator<T*>(elem);}
+
+template <typename T>
+std::reverse_iterator<const T*> Vector<T>::rend() const noexcept
+{return std::reverse_iterator<T*>(elem);}
+
+template <typename T>
+std::reverse_iterator<const T*> Vector<T>::crend() const noexcept
+{return std::reverse_iterator<T*>(elem);}
 
 #endif
