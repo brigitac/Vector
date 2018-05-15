@@ -1,12 +1,15 @@
 #ifndef VECTOR_H
 #define VECTOR_H
+
 #include <chrono>
 #include <exception>
 #include <algorithm>
 #include <cstring>
 #include <iterator>
 #include "timer.h"
+
 #define MAX_SIZE 4611686018427387903
+
 template<class T>
 class Vector
 {
@@ -21,8 +24,6 @@ public:
     inline int capacity() const {return capacity_;}
     Vector(const Vector& v);
     Vector& operator=(const Vector& v);
-    T& operator[](size_t i);
-    const T& operator[](size_t i) const;
     Vector(std::initializer_list<T> il);
     ~Vector() {delete[] elem;}
     void push_back(const T& value);
@@ -31,10 +32,6 @@ public:
     bool empty() const;
     const T* begin() const;
     const T* end() const;
-    T& front();
-    T& back();
-    T& at(size_t pos);
-    T* data();
     void reserve(size_t new_cap );
     void resize(size_t count);
     void resize( size_t count, const T& value );
@@ -44,6 +41,17 @@ public:
     size_t max_size() const;
     void shrink_to_fit();
     void swap(Vector& other);
+    //element access
+    T& at(size_t pos);
+    const T& at(size_t pos) const;
+    T& operator[](size_t i);
+    const T& operator[](size_t i) const;
+    T& front();
+    const T& front() const;
+    T& back();
+    const T& back() const;
+    T * data() noexcept;
+    const T * data() const noexcept;
 };
 
 template<class T>
@@ -69,14 +77,6 @@ Vector<T> operator+(const Vector<T>& a, const Vector<T>& b)
         c[i] = a[i] + b[i];
     return c;
 }
-
-template<class T>
-T& Vector<T>::operator[](size_t i)
-{return elem[i];}
-
-template<class T>
-const T& Vector<T>::operator[](size_t i) const
-{return elem[i];}
 
 template<class T>
 Vector<T>::Vector(std::initializer_list<T> il)
@@ -124,21 +124,6 @@ bool Vector<T>::empty() const
 {return begin() == end();}
 
 template<class T>
-T& Vector<T>::front()
-{return elem[0];}
-
-template<class T>
-T& Vector<T>::back()
-{return elem[size_ - 1];}
-
-template<class T>
-T& Vector<T>::at(size_t pos)
-{
-    if (pos < 0 || size() <= pos) throw std::out_of_range{"vector"};;
-    return elem[pos];
-}
-
-template<class T>
 void Vector<T>::pop_back()
 {size_--;}
 
@@ -180,9 +165,9 @@ void Vector<T>::resize( size_t count, const T& value )
 template <typename T>
 void Vector<T>::clear()
 {
-    for (auto i = 0; i < size_; ++i)
-       elem[i].~T();
-//  delete[] elem; //kodel neleidzia istrinti?
+     for (auto i = 0; i < size_; ++i)
+        elem[i].~T();
+//    delete[] elem; //kodel neleidzia istrinti?
     size_ = 0;
 }
 
@@ -194,10 +179,6 @@ void Vector<T>::reallocate()
     delete[] elem;
     elem=elem2;
 }
-
-template<typename T>
-T* Vector<T>::data()
-{return elem;}
 
 template <typename T>
 std::reverse_iterator<T *> Vector<T>::rend()
@@ -212,6 +193,7 @@ void Vector<T>::shrink_to_fit()
 {capacity_ = size_;}
 
 template <typename T>
+
 void Vector<T>::swap(Vector<T> &v2)
 {
     auto size_2 = size_,
@@ -226,5 +208,52 @@ void Vector<T>::swap(Vector<T> &v2)
     v2.capacity_ = capacity_2;
     v2.elem = telem;
 }
+
+//element access
+template<class T>
+T& Vector<T>::at(size_t pos)
+{
+    if (pos < 0 || size() <= pos) throw std::out_of_range{"vector"};;
+    return elem[pos];
+}
+
+template<class T>
+const T& Vector<T>::at(size_t pos) const
+{
+    if (pos < 0 || size() <= pos) throw std::out_of_range{"vector"};;
+    return elem[pos];
+}
+
+template<class T>
+T& Vector<T>::operator[](size_t i)
+{return elem[i];}
+
+template<class T>
+const T& Vector<T>::operator[](size_t i) const
+{return elem[i];}
+
+template<class T>
+T& Vector<T>::front()
+{return elem[0];}
+
+template<class T>
+const T& Vector<T>::front() const
+{return elem[0];}
+
+template<class T>
+T& Vector<T>::back()
+{return elem[size_ - 1];}
+
+template<class T>
+const T& Vector<T>::back() const
+{return elem[size_ - 1];}
+
+template<typename T>
+T* Vector<T>::data() noexcept
+{return elem;}
+
+template<typename T>
+const T* Vector<T>::data() const noexcept
+{return elem;}
 
 #endif

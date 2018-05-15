@@ -24,14 +24,14 @@ int main()
     std::cout << "Vector size yra " << V.size()
     << ", capacity yra " << V.capacity() << "\n";
     
-//    v.clear();
-//    V.clear();
+//   v.clear();
+//   V.clear();
 //    std::cout <<v.begin()<<'\n';
 //    std::cout <<V.begin()<<'\n'; //ar cia irgi turi neleisti isvesti?
 //
-//    std::cout << "std::vector size yra " << v.size()
-//    << ", capacity yra " << v.capacity() << "\n";
-//    std::cout << "Vector size yra " << V.size()
-//    << ", capacity yra " << V.capacity() << "\n";
+//   std::cout << "std::vector size yra " << v.size()
+//   << ", capacity yra " << v.capacity() << "\n";
+//   std::cout << "Vector size yra " << V.size()
+//   << ", capacity yra " << V.capacity() << "\n";
     
 }
