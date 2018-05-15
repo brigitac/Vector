@@ -20,8 +20,6 @@ public:
     Vector() : size_{0}, capacity_{0}, elem{new T [size_]} {}
     Vector(int s) : size_{s}, capacity_{s}, elem{new T [size_]} {std::fill_n(elem,s,0.0);}
     Vector(int s, int val) : size_(s), capacity_(s), elem(new T [size_]) {std::fill_n(elem,s,val);}
-    inline int size() const {return size_;}
-    inline int capacity() const {return capacity_;}
     Vector(const Vector& v);
     Vector& operator=(const Vector& v);
     Vector(std::initializer_list<T> il);
@@ -29,14 +27,10 @@ public:
     void push_back(const T& value);
     void push_back(T&& value);
     void pop_back();
-    bool empty() const;
-    void reserve(size_t new_cap );
     void resize(size_t count);
     void resize( size_t count, const T& value );
     void clear();
     void reallocate();
-    size_t max_size() const;
-    void shrink_to_fit();
     void swap(Vector& other);
     // Element Access
     T& at(size_t pos);
@@ -62,6 +56,13 @@ public:
     std::reverse_iterator<T*> rend() noexcept;
     std::reverse_iterator<const T*> rend() const noexcept;
     std::reverse_iterator<const T*> crend() const noexcept;
+    // Capacity
+    bool empty() const noexcept;
+    size_t size() const noexcept;
+    size_t max_size() const noexcept;
+    void reserve(size_t new_cap );
+    size_t capacity() const noexcept;
+    void shrink_to_fit();
 };
 
 template<class T>
@@ -89,9 +90,7 @@ Vector<T> operator+(const Vector<T>& a, const Vector<T>& b)
 }
 
 template<class T>
-Vector<T>::Vector(std::initializer_list<T> il)
-: size_{static_cast<int>(il.size())},
-elem{new T[il.size()]}
+Vector<T>::Vector(std::initializer_list<T> il) : size_{static_cast<int>(il.size())}, elem{new T[il.size()]}
 {std::copy(il.begin(),il.end(),elem);}
 
 template<class T>
@@ -122,28 +121,14 @@ void Vector<T>::push_back(T &&value)
 }
 
 template<class T>
-bool Vector<T>::empty() const
-{return begin() == end();}
-
-template<class T>
 void Vector<T>::pop_back()
 {size_--;}
-
-template<class T>
-void Vector<T>::reserve(size_t new_cap)
-{
-    T* elem2 = new T [new_cap];
-    std::copy (elem, elem + size_, elem2);
-    capacity_ = new_cap;
-    delete[] elem;
-    elem = elem2;
-}
 
 template<class T>
 void Vector<T>::resize(size_t count)
 {
     size_=count;
-    reallocate();
+    reallocate(); // ar tikrai reallocatinti cia reikia tokiu budu?
 }
 
 template<class T>
@@ -153,7 +138,7 @@ void Vector<T>::resize( size_t count, const T& value )
     {
         auto difference=count-size_;
         size_=count;
-        reallocate();
+        reallocate(); // ar tikrai reallocatinti cia reikia tokiu budu?
         for (auto i=size_-difference; i < size_; ++i) elem[i] = value;
         capacity_=size_;
     }
@@ -176,22 +161,13 @@ void Vector<T>::clear()
 template<typename T>
 void Vector<T>::reallocate()
 {
-    T* elem2=new T[size_];
+    T* elem2=new T[capacity_];
     std::memcpy(elem2,elem,size_*sizeof(T));
     delete[] elem;
     elem=elem2;
 }
 
 template <typename T>
-size_t Vector<T>::max_size() const
-{return MAX_SIZE;}
-
-template <typename T>
-void Vector<T>::shrink_to_fit()
-{capacity_ = size_;}
-
-template <typename T>
-
 void Vector<T>::swap(Vector<T> &v2)
 {
     auto size_2 = size_,
@@ -302,5 +278,39 @@ std::reverse_iterator<const T*> Vector<T>::rend() const noexcept
 template <typename T>
 std::reverse_iterator<const T*> Vector<T>::crend() const noexcept
 {return std::reverse_iterator<T*>(elem);}
+
+// Capacity
+template<class T>
+bool Vector<T>::empty() const noexcept
+{return begin() == end();}
+
+template<class T>
+size_t Vector<T>::size() const noexcept
+{return size_;}
+
+template <typename T>
+size_t Vector<T>::max_size() const noexcept
+{return MAX_SIZE;}
+
+template<class T>
+void Vector<T>::reserve(size_t new_cap)
+{
+    if (new_cap>size_)
+    {
+        capacity_ = new_cap;
+        reallocate();
+    }
+}
+
+template<class T>
+size_t Vector<T>::capacity() const noexcept
+{return capacity_;}
+
+template <typename T>
+void Vector<T>::shrink_to_fit()
+{
+    capacity_ = size_;
+    reallocate();
+}
 
 #endif
