@@ -23,7 +23,8 @@ public:
     Vector(const Vector& v);
     Vector& operator=(const Vector& v);
     Vector(std::initializer_list<T> il);
-    ~Vector() {delete[] elem;}
+    // Member functions
+    ~Vector();
     // Element Access
     T& at(size_t pos);
     const T& at(size_t pos) const;
@@ -110,6 +111,10 @@ Vector<T>::Vector(const Vector& v) :elem{new T[v.size_]}, size_{v.size_}
     for (int i=0; i!=size_; ++i)
     elem[i] = v.elem[i];
 }
+
+// Member functions
+template<class T>
+Vector<T>::~Vector() {delete[] elem;}
 
 // Element Access
 template<class T>
@@ -422,18 +427,6 @@ void Vector<T>::pop_back()
     size_--;
     elem[size_].~T();
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 template<class T>
 void Vector<T>::resize(size_t count)
