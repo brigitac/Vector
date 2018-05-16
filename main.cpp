@@ -34,4 +34,22 @@ int main()
 //   std::cout << "Vector size yra " << V.size()
 //   << ", capacity yra " << V.capacity() << "\n";
     
+//    auto it = v.begin();
+//    it = v.insert(it, 200);
+//    auto it2 = V.begin();
+//    it2 = V.insert(it2, 200);
+//    std::cout<<v[0]<<" "<<V[0];
+//    std::cout << "std::vector size yra " << v.size()
+//    << ", capacity yra " << v.capacity() << "\n";
+//    std::cout << "Vector size yra " << V.size()
+//    << ", capacity yra " << V.capacity() << "\n";
+//
+//    v.emplace_back(777);
+//    std::cout<<v[100]<<std::endl;
+//    V.emplace_back(777);
+//    std::cout<<v[100]<<std::endl;
+//    v.pop_back();
+//    std::cout<<v[100]<<std::endl;
+//    V.pop_back();
+//    std::cout<<v[100]<<std::endl;
 }
