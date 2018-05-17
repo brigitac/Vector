@@ -52,7 +52,7 @@ int main()
 //    std::cout<<v[100]<<std::endl;
 //    V.pop_back();
 //    std::cout<<v[100]<<std::endl;
-//    
+//
 //    v.assign(5, 101);
 //    V.assign(5, 101);
 //    for (int c : v)
@@ -60,5 +60,16 @@ int main()
 //        std::cout << c << '\n';
 //    }
 //    std::cout<<V[0]<<" "<<V[1]<<" "<<V[2]<<" "<<V[3]<<" "<<V[4]<<" "<<V[5]<<" "<<V[6]<<" ";
-    
+//        std::vector<int> v2 {1,2,3};
+//        Vector<int> V2{1,2,3};
+//    v={1,2,3};
+//    V={1,2,3};
+//        v2=v;
+//        V2=V;
+//        std::cout<<v[0]<<" "<<v[1]<<" "<<v[2]<<" "<<v[3]<<" "<<v[4]<<" "<<v[5]<<" "<<v[6]<<" ";
+//        std::cout<<V[0]<<" "<<V[1]<<" "<<V[2]<<" "<<V[3]<<" "<<V[4]<<" "<<V[5]<<" "<<V[6]<<" ";
+//        std::cout << "std::vector size yra " << v.size()
+//        << ", capacity yra " << v.capacity() << "\n";
+//        std::cout << "Vector size yra " << V.size()
+//        << ", capacity yra " << V.capacity() << "\n";
 }

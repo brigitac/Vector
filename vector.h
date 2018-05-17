@@ -21,9 +21,12 @@ public:
     Vector(int s) : size_{s}, capacity_{s}, elem{new T [size_]} {std::fill_n(elem,s,0.0);}
     Vector(int s, int val) : size_(s), capacity_(s), elem(new T [size_]) {std::fill_n(elem,s,val);}
     Vector(const Vector& v);
-    Vector& operator=(const Vector& v);
     Vector(std::initializer_list<T> il);
     // Member functions
+    Vector& operator=(const Vector& other);
+    Vector& operator=(Vector&& other);
+    //    vector& operator=( vector&& other ) noexcept(/* see below */);
+    Vector& operator=( std::initializer_list<T> ilist );
     void assign(T count, const T& value);
     template< class InputIt > void assign(InputIt first, InputIt last);
     void assign(std::initializer_list<T> ilist);
@@ -81,18 +84,6 @@ public:
 };
 
 template<class T>
-Vector<T>& Vector<T>::operator=(const Vector& v)
-{
-    T* p = new T[v.size_];
-    for (int i=0; i!=v.size_; ++i) // nukopijuojame v elementus
-        p[i] = v.elem[i];
-    delete[] elem; // atlaisviname seną atmintį!
-    elem = p;      // elem point'ina į naują atmintį
-    size_ = v.size_;     // atnaujiname size
-    return *this;  // grąžiname objektą
-}
-
-template<class T>
 Vector<T> operator+(const Vector<T>& a, const Vector<T>& b)
 {
     if (a.size() != b.size())
@@ -105,7 +96,7 @@ Vector<T> operator+(const Vector<T>& a, const Vector<T>& b)
 }
 
 template<class T>
-Vector<T>::Vector(std::initializer_list<T> il) : size_{static_cast<int>(il.size())}, elem{new T[il.size()]}
+Vector<T>::Vector(std::initializer_list<T> il) : size_{static_cast<int>(il.size())}, elem{new T[il.size()]}, capacity_{static_cast<int>(il.size())}
 {std::copy(il.begin(),il.end(),elem);}
 
 template<class T>
@@ -116,6 +107,45 @@ Vector<T>::Vector(const Vector& v) :elem{new T[v.size_]}, size_{v.size_}
 }
 
 // Member functions
+template<class T>
+Vector<T>& Vector<T>::operator=(const Vector& other)
+{
+    if (&other == this) return *this;
+    if (capacity_<other.size_) capacity_=other.size_;
+    T* p = new T[other.size_];
+    for (int i=0; i!=other.size_; ++i)   p[i] = other.elem[i];
+    delete[] elem;
+    elem = p;
+    size_ = other.size_;
+    return *this;
+}
+
+template<class T>
+Vector<T>& Vector<T>::operator=(Vector&& other)
+{
+    if (&other == this) return *this;
+    delete[] elem;
+    elem = other.elem;
+    size_ = other.size_;
+    capacity_=other.capacity_;
+    other.elem = nullptr;
+    other.size_ = 0;
+    other.capacity_=0;
+    return *this;
+}
+
+template <typename T>
+Vector<T>& Vector<T>::operator = (std::initializer_list<T> ilist)
+{
+    if (capacity_<ilist.size()) capacity_=ilist.size();
+    T* p = new T[ilist.size()];
+    auto i=0;
+    for (auto &item:ilist)  p[i++] = item;
+    size_=ilist.size();
+    delete[] elem;
+    elem = p;
+    return *this;
+}
 
 template <typename T>
 void Vector<T>::assign(T count, const T& value)
