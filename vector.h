@@ -24,6 +24,9 @@ public:
     Vector& operator=(const Vector& v);
     Vector(std::initializer_list<T> il);
     // Member functions
+    void assign(T count, const T& value);
+    template< class InputIt > void assign(InputIt first, InputIt last);
+    void assign(std::initializer_list<T> ilist);
     ~Vector();
     // Element Access
     T& at(size_t pos);
@@ -53,7 +56,7 @@ public:
     bool empty() const noexcept;
     size_t size() const noexcept;
     size_t max_size() const noexcept;
-    void reserve(size_t new_cap );
+    void reserve(size_t new_cap);
     size_t capacity() const noexcept;
     void shrink_to_fit();
     // Modifiers
@@ -113,6 +116,46 @@ Vector<T>::Vector(const Vector& v) :elem{new T[v.size_]}, size_{v.size_}
 }
 
 // Member functions
+
+template <typename T>
+void Vector<T>::assign(T count, const T& value)
+{
+    if (count > capacity_)
+    {
+        capacity_ = count*2;
+        reallocate();
+    }
+    for (auto i = 0; i < count; ++i) elem[i] = value;
+    size_ = count;
+}
+
+template <typename T>
+template< class InputIt >
+void Vector<T>::assign(InputIt first, InputIt last)
+{
+    auto count = last - first;
+    if (count > capacity_)
+    {
+        capacity_ = count*2;
+        reallocate();
+    }
+    for (auto i = 0; i < count; ++i, ++first) elem[i] = *first;
+    size_ = count;
+}
+
+template <typename T>
+void Vector<T>::assign(std::initializer_list<T> ilist)
+{
+    auto count = ilist.size();
+    if (count > capacity_)
+    {
+        capacity_ = count * 2;
+        reallocate();
+    }
+    auto i = 0;
+    for (auto &item: ilist) elem[i++] = item;
+}
+
 template<class T>
 Vector<T>::~Vector() {delete[] elem;}
 

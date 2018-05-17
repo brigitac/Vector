@@ -52,4 +52,13 @@ int main()
 //    std::cout<<v[100]<<std::endl;
 //    V.pop_back();
 //    std::cout<<v[100]<<std::endl;
+//    
+//    v.assign(5, 101);
+//    V.assign(5, 101);
+//    for (int c : v)
+//    {
+//        std::cout << c << '\n';
+//    }
+//    std::cout<<V[0]<<" "<<V[1]<<" "<<V[2]<<" "<<V[3]<<" "<<V[4]<<" "<<V[5]<<" "<<V[6]<<" ";
+    
 }
