@@ -13,16 +13,28 @@
 template<class T>
 class Vector
 {
-    int size_;
-    int capacity_;
+    size_t size_;
+    size_t capacity_;
     T* elem;
 public:
-    Vector() : size_{0}, capacity_{0}, elem{new T [size_]} {}
-    Vector(int s) : size_{s}, capacity_{s}, elem{new T [size_]} {std::fill_n(elem,s,0.0);}
-    Vector(int s, int val) : size_(s), capacity_(s), elem(new T [size_]) {std::fill_n(elem,s,val);}
-    Vector(const Vector& v);
-    Vector(std::initializer_list<T> il);
     // Member functions
+    Vector();
+// // vector() noexcept(noexcept(Allocator()));
+// // explicit vector(const Allocator& alloc) noexcept;
+    Vector(size_t count, const T &val);
+// // vector( size_t count, const T& value, const Allocator& alloc = Allocator());
+    explicit Vector(size_t count);
+// //explicit vector(size_t count, const Allocator& alloc = Allocator() );
+    Vector(T* first, T* last);
+// //template< class InputIt > vector( InputIt first, InputIt last, const Allocator& alloc = Allocator() );
+    Vector(const Vector& other);
+// //vector(const Vector& other, const Allocator& alloc );
+    Vector(ector&& other) noexcept;
+// //vector(Vector&& other) noexcept;
+// //vector(Vector&& other, const Allocator& alloc );
+    Vector(std::initializer_list<T> init);
+// //vector(std::initializer_list<T> init, const Allocator& alloc = Allocator() );
+
     Vector& operator=(const Vector& other);
     Vector& operator=(Vector&& other);
     //    vector& operator=( vector&& other ) noexcept(/* see below */);
@@ -83,30 +95,40 @@ public:
     void reallocate();
 };
 
-template<class T>
-Vector<T> operator+(const Vector<T>& a, const Vector<T>& b)
-{
-    if (a.size() != b.size())
-        throw std::runtime_error("Vektorių dydžio neatitikimas!");
-    auto size = a.size();
-    Vector<T> c(size);
-    for (auto i = 0; i != a.size(); ++i)
-        c[i] = a[i] + b[i];
-    return c;
-}
-
-template<class T>
-Vector<T>::Vector(std::initializer_list<T> il) : size_{static_cast<int>(il.size())}, elem{new T[il.size()]}, capacity_{static_cast<int>(il.size())}
-{std::copy(il.begin(),il.end(),elem);}
-
-template<class T>
-Vector<T>::Vector(const Vector& v) :elem{new T[v.size_]}, size_{v.size_}
-{
-    for (int i=0; i!=size_; ++i)
-    elem[i] = v.elem[i];
-}
-
 // Member functions
+template<class T>
+Vector<T>::Vector() : size_{0}, capacity_{0}, elem{new T [capacity_]} {}
+
+template <typename T>
+Vector<T>::Vector(size_t count, const T &value) : size_{count}, capacity_{count}, elem{new T [capacity_]} 
+{std::fill_n(elem,count,value);}
+
+template <typename T>
+Vector<T>::Vector(size_t count) : size_{count}, capacity_{count}, elem{new T [capacity_]} 
+{std::fill_n(elem,count,T());}
+
+template <typename T>
+Vector<T>::Vector(T* first, T* last) 
+{
+    auto count = last - first;
+    capacity_ = count;
+    elem = new T[capacity_];
+    for (auto i = 0; i < count; ++i, ++first) elem[i] = *first;
+    size_ = count;
+}
+
+template<class T>
+Vector<T>::Vector(const Vector& other) :elem{new T[other.size_]}, size_{other.size_}, capacity_{other.size_}
+{for (int i=0; i!=size_; ++i) elem[i] = other.elem[i];}
+
+template <typename T>
+Vector<T>::Vector(Vector&& other) noexcept :elem{new T[other.size_]}, size_{other.size_}, capacity_{other.size_} 
+{for (auto i = 0; i < other.vec_sz; ++i)  elem[i] = std::move(other.elem[i]);}
+
+template<class T>
+Vector<T>::Vector(std::initializer_list<T>init) : size_{static_cast<int>(init.size())}, elem{new T[init.size()]}, capacity_{static_cast<int>(init.size())}
+{std::copy(init.begin(),init.end(),elem);}
+
 template<class T>
 Vector<T>& Vector<T>::operator=(const Vector& other)
 {
@@ -565,6 +587,18 @@ void Vector<T>::reallocate()
     std::copy(elem,elem+size_,elem2);
     delete[] elem;
     elem=elem2;
+}
+
+template<class T>
+Vector<T> operator+(const Vector<T>& a, const Vector<T>& b)
+{
+    if (a.size() != b.size())
+        throw std::runtime_error("Vektorių dydžio neatitikimas!");
+    auto size = a.size();
+    Vector<T> c(size);
+    for (auto i = 0; i != a.size(); ++i)
+        c[i] = a[i] + b[i];
+    return c;
 }
 
 #endif
