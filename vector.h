@@ -117,15 +117,15 @@ Vector<T>::Vector(T* first, T* last)
 }
 
 template<class T>
-Vector<T>::Vector(const Vector& other) :elem{new T[other.size_]}, size_{other.size_}, capacity_{other.size_}
+Vector<T>::Vector(const Vector& other) :elem{new T[other.size_]}, size_{other.size_}, capacity_{other.capacity_}
 {for (int i=0; i!=size_; ++i) elem[i] = other.elem[i];}
 
 template <typename T>
-Vector<T>::Vector(Vector&& other) noexcept :elem{new T[other.size_]}, size_{other.size_}, capacity_{other.size_} 
-{for (auto i = 0; i < other.vec_sz; ++i)  elem[i] = std::move(other.elem[i]);}
+Vector<T>::Vector(Vector&& other) noexcept :elem{new T[other.size_]}, size_{other.size_}, capacity_{other.capacity_} 
+{for (auto i = 0; i < other.size_; ++i)  elem[i] = std::move(other.elem[i]);}
 
 template<class T>
-Vector<T>::Vector(std::initializer_list<T>init) : size_{static_cast<int>(init.size())}, elem{new T[init.size()]}, capacity_{static_cast<int>(init.size())}
+Vector<T>::Vector(std::initializer_list<T>init) : size_{static_cast<size_t>(init.size())}, elem{new T[init.size()]}, capacity_{static_cast<size_t>(init.size())}
 {std::copy(init.begin(),init.end(),elem);}
 
 template<class T>
@@ -579,7 +579,7 @@ void Vector<T>::reallocate()
     elem=elem2;
 }
 
-template<class T>
+template<typename T>
 Vector<T> operator+(const Vector<T>& a, const Vector<T>& b)
 {
     if (a.size() != b.size())
@@ -591,4 +591,11 @@ Vector<T> operator+(const Vector<T>& a, const Vector<T>& b)
     return c;
 }
 
+template<typename T>
+void swap(T& x, T& y) 
+{
+    T temp {std::move(x)};
+    x = std::move(y);
+    y = std::move(temp);
+}
 #endif
