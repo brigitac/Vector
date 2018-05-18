@@ -24,23 +24,22 @@ public:
     Vector(size_t count, const T &val);
 // // vector( size_t count, const T& value, const Allocator& alloc = Allocator());
     explicit Vector(size_t count);
-// //explicit vector(size_t count, const Allocator& alloc = Allocator() );
+// // explicit vector(size_t count, const Allocator& alloc = Allocator() );
     Vector(T* first, T* last);
-// //template< class InputIt > vector( InputIt first, InputIt last, const Allocator& alloc = Allocator() );
+// // template< class InputIt > vector( InputIt first, InputIt last, const Allocator& alloc = Allocator() );
     Vector(const Vector& other);
 // //vector(const Vector& other, const Allocator& alloc );
-    Vector(ector&& other) noexcept;
-// //vector(Vector&& other) noexcept;
-// //vector(Vector&& other, const Allocator& alloc );
+    Vector(Vector&& other) noexcept;
+// // vector(Vector&& other) noexcept;
+// // vector(Vector&& other, const Allocator& alloc );
     Vector(std::initializer_list<T> init);
-// //vector(std::initializer_list<T> init, const Allocator& alloc = Allocator() );
-
+// // vector(std::initializer_list<T> init, const Allocator& alloc = Allocator() );
     Vector& operator=(const Vector& other);
     Vector& operator=(Vector&& other);
-    //    vector& operator=( vector&& other ) noexcept(/* see below */);
+// // vector& operator=( vector&& other ) noexcept(/* see below */);
     Vector& operator=( std::initializer_list<T> ilist );
     void assign(T count, const T& value);
-    template< class InputIt > void assign(InputIt first, InputIt last);
+    void assign(T* first, T* last);
     void assign(std::initializer_list<T> ilist);
     ~Vector();
     // Element Access
@@ -79,7 +78,7 @@ public:
     T* insert(const T* pos, const T& value );
     T* insert(const T* pos, T&& value );
     T* insert(const T* pos, size_t count, const T& value);
-    template< class InputIt > T* insert(const T* pos, InputIt first, InputIt last );
+    T* insert(const T* pos, T* first, T* last );
     T* insert(const T* pos, std::initializer_list<T> ilist);
     template <class ... Args> T* emplace(const T*, Args && ...);
     T* erase(const T* pos);
@@ -135,7 +134,7 @@ Vector<T>& Vector<T>::operator=(const Vector& other)
     if (&other == this) return *this;
     if (capacity_<other.size_) capacity_=other.size_;
     T* p = new T[other.size_];
-    for (int i=0; i!=other.size_; ++i)   p[i] = other.elem[i];
+    for (int i=0; i!=other.size_; ++i) p[i] = other.elem[i];
     delete[] elem;
     elem = p;
     size_ = other.size_;
@@ -177,13 +176,13 @@ void Vector<T>::assign(T count, const T& value)
         capacity_ = count*2;
         reallocate();
     }
-    for (auto i = 0; i < count; ++i) elem[i] = value;
+    std::fill_n(elem,count,value);
+    std::cout<<"as cia";
     size_ = count;
 }
 
 template <typename T>
-template< class InputIt >
-void Vector<T>::assign(InputIt first, InputIt last)
+void Vector<T>::assign(T* first, T* last)
 {
     auto count = last - first;
     if (count > capacity_)
@@ -360,7 +359,7 @@ T* Vector<T>::insert(const T* pos, const T& value)
         capacity_=capacity_*2;
         reallocate();
     }
-    memmove(pos2+1, pos2, (size_-(pos-elem))*sizeof(T));
+    std::copy(pos2-1, pos2+(size_-(pos-elem)), pos2);
     (*pos2) = value;
     ++size_;
     return pos2;
@@ -375,7 +374,7 @@ T* Vector<T>::insert(const T* pos, T&& value )
         capacity_=capacity_*2;
         reallocate();
     }
-    memmove(pos2 + 1, pos2, (size_ - (pos - elem)) * sizeof(T));
+    std::copy(pos2-1, pos2+(size_-(pos-elem)), pos2);
     (*pos2) = std::move(value);
     ++size_;
     return pos2;
@@ -391,7 +390,7 @@ T* Vector<T>::insert(const T* pos, size_t count,const T& value)
         capacity_ = (size_ + count) << 2;
         reallocate();
     }
-    memmove(pos2 + count, pos2, (size_ - (pos - elem)) * sizeof(T));
+    std::copy(pos2-count, pos2+(size_-(pos-elem)), pos2);
     size_ += count;
     for (T* pos = pos2; count--; ++pos)
         (*pos) = value;
@@ -399,8 +398,7 @@ T* Vector<T>::insert(const T* pos, size_t count,const T& value)
 }
 
 template <typename T>
-template <class InputIt>
-T* Vector<T>::insert(const T* pos, InputIt first, InputIt last)
+T* Vector<T>::insert(const T* pos, T* first, T* last)
 {
     T* pos2 = &elem[pos - elem];
     size_t count = last - first;
@@ -410,7 +408,7 @@ T* Vector<T>::insert(const T* pos, InputIt first, InputIt last)
         capacity_ = (size_ + count) << 2;
         reallocate();
     }
-    memmove(pos2 + count, pos2, (size_ - (pos - elem)) * sizeof(T));
+    std::copy(pos2-count, pos2+(size_-(pos-elem)), pos2);
     for (T* it = pos2; first != last; ++pos, ++first)
         (*pos) = *first;
     size_ += count;
@@ -427,8 +425,8 @@ T* Vector<T>::insert(const T* pos, std::initializer_list<T> ilist)
     {
         capacity_ = (size_ + count) << 2;
         reallocate();
-    }
-    memmove(pos2 + count, pos2, (size_ - (pos - elem)) * sizeof(T));
+    }std::copy(pos2-count, pos2+(size_-(pos-elem)), pos2);
+    std::copy(pos2-count, pos2+(size_-(pos-elem)), pos2);
     T* pos3 = pos2;
     for (auto &item: ilist)
     {
@@ -448,7 +446,7 @@ T* Vector<T>::emplace(const T*  pos, Args && ... args)
         capacity_=capacity_ *2;
         reallocate();
     }
-    memmove(pos2 + 1, pos2, (size_ - (pos - elem)) * sizeof(T));
+    std::copy(pos2-1, pos2+(size_-(pos-elem)), pos2);
     (*pos2) = std::move( T( std::forward<Args>(args) ... ) );
     ++size_;
     return pos2;
@@ -459,19 +457,19 @@ T* Vector<T>::erase(const T* pos)
 {
     T* pos2 = &elem[pos - elem];
     (*pos2).~T();
-    memmove(pos2, pos2 + 1, (size_ - (pos - elem) - 1) * sizeof(T));
+    std::copy(pos2+1, pos2+(size_-(pos-elem)), pos2);
     --size_;
     return pos2;
 }
 
 template <typename T>
 T* Vector<T>::erase(const T* first, const T* last)
-{
-    
+{ 
+    std::cout<<"as esu cia :)"<<std::endl;
     T* pos = &elem[first - elem];
     if (first == last) return pos;
-    for ( ; first != last; ++first) (*first).~T();
-    memmove(pos, last, (size_ - (last - elem)) * sizeof(T));
+    for (;first != last; ++first) (*first).~T();
+    std::copy(last, last+(size_-(last-elem)), pos);
     size_ -= last - first;
     return pos;
 }
@@ -535,10 +533,7 @@ void Vector<T>::resize(size_t count)
         }
     }
     else
-    {
-        for (auto i = size_; i < count; ++i)
-            elem[i].~T();
-    }
+    {for (auto i = size_; i < count; ++i) elem[i].~T();}
     size_ = count;
 }
 
@@ -552,14 +547,9 @@ void Vector<T>::resize( size_t count, const T& value )
             capacity_ = count;
             reallocate();
         }
-        for (auto i = size_; i < count; ++i)
-            elem[i] = value;
+        for (auto i = size_; i < count; ++i) elem[i] = value;
     }
-    else
-    {
-        for (auto i = size_; i < count; ++i)
-            elem[i].~T();
-    }
+    else {for (auto i = size_; i < count; ++i) elem[i].~T();}
     size_ = count;
 }
 
