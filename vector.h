@@ -185,7 +185,7 @@ Vector<T>& Vector<T>::operator = (std::initializer_list<T> ilist)
     auto i=0;
     for (auto &item:ilist)  p[i++] = item;
     size_=ilist.size();
-    for (size_t i = 0; i != size_; i++) {allocator.destroy(elem + i);}
+    for (i = 0; i != size_; i++) {allocator.destroy(elem + i);}
     allocator.deallocate(elem, capacity_);
     elem = p;
     return *this;
@@ -428,7 +428,7 @@ T* Vector<T>::insert(const T* pos, size_t count,const T& value)
     }
     std::copy(pos2-count, pos2+(size_-(pos-elem)), pos2);
     size_ += count;
-    for (T* pos = pos2; count--; ++pos) (*pos) = value;
+    for (T* it = pos2; count--; ++it) (*it) = value;
     return pos2;
 }
 
