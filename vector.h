@@ -229,7 +229,7 @@ void Vector<T>::assign(std::initializer_list<T> ilist)
 }
 
 template<class T>
-Vector<T>::std::allocator<T> get_allocator() const;
+std::allocator<T> Vector<T>::get_allocator() const
 {return allocator;}
 
 template<class T>
