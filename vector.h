@@ -20,28 +20,27 @@ class Vector
 public:
     // Member functions
     Vector();
-//  // Vector() noexcept(noexcept(std::allocator<T>()));
-//  // explicit Vector(const std::allocator<T>& alloc) noexcept;
+// Vector() noexcept(noexcept(std::allocator<T>()));
+// explicit Vector(const std::allocator<T>& alloc) noexcept;
     Vector(size_t count, const T &val);
-// // vector( size_t count, const T& value, const Allocator& alloc = Allocator());
+// vector( size_t count, const T& value, const Allocator& alloc = Allocator());
     explicit Vector(size_t count);
-// // explicit vector(size_t count, const Allocator& alloc = Allocator() );
+// explicit vector(size_t count, const Allocator& alloc = Allocator() );
     Vector(T* first, T* last);
-// // template< class InputIt > vector( InputIt first, InputIt last, const Allocator& alloc = Allocator() );
+// template< class InputIt > vector( InputIt first, InputIt last, const Allocator& alloc = Allocator() );
     Vector(const Vector& other);
-// //vector(const Vector& other, const Allocator& alloc );
+//vector(const Vector& other, const Allocator& alloc );
     Vector(Vector&& other) noexcept;
-// // vector(Vector&& other) noexcept;
-// // vector(Vector&& other, const Allocator& alloc );
+// vector(Vector&& other, const Allocator& alloc );
     Vector(std::initializer_list<T> init);
-// // vector(std::initializer_list<T> init, const Allocator& alloc = Allocator() );
+// vector(std::initializer_list<T> init, const Allocator& alloc = Allocator() );
     Vector& operator=(const Vector& other);
-    Vector& operator=(Vector&& other);
-// // vector& operator=( vector&& other ) noexcept;
+    Vector& operator=(Vector&& other) noexcept;
     Vector& operator=( std::initializer_list<T> ilist );
     void assign(T count, const T& value);
     void assign(T* first, T* last);
     void assign(std::initializer_list<T> ilist);
+    std::allocator<T> get_allocator() const;
     ~Vector();
 
     // Element Access
@@ -163,7 +162,7 @@ Vector<T>& Vector<T>::operator=(const Vector& other)
 }
 
 template<class T>
-Vector<T>& Vector<T>::operator=(Vector&& other)
+Vector<T>& Vector<T>::operator=(Vector&& other) noexcept
 {
     if (&other == this) return *this;
     for (size_t i = 0; i != size_; i++) {allocator.destroy(elem + i);}
@@ -228,6 +227,10 @@ void Vector<T>::assign(std::initializer_list<T> ilist)
     elem = allocator.allocate(capacity_);
     for (auto &item: ilist) elem[i++] = item;
 }
+
+template<class T>
+Vector<T>::std::allocator<T> get_allocator() const;
+{return allocator;}
 
 template<class T>
 Vector<T>::~Vector() 
