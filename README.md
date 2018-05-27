@@ -5,3 +5,5 @@
 3. 'Nueikite' į nusiklonuotą folderį įvesdami: ```cd Vector```
 4. Įveskite: ```make ```
 5. Ir:```./a.out```  
+
+### Efektyvumo/spartos analizę rasite [čia](https://github.com/brigitac/Vector/releases).
