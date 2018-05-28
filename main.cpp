@@ -6,14 +6,14 @@ int main()
     std::vector<int> v {};
     Vector<int>V {};
     Timer t;
-    for (int i = 1; i <= 100; ++i)
+    for (int i = 1; i <= 10000; ++i)
     {
         v.push_back(i);
     }
     std::cout << "std::vector užpildyti užtruko: "
     << t.elapsed() << " s\n";
     t.reset();
-    for (int i = 1; i <= 100; ++i)
+    for (int i = 1; i <= 10000; ++i)
     {
         V.push_back(i);
     }

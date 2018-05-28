@@ -9,15 +9,23 @@
 #include <memory>
 #include "timer.h"
 
-
 template<class T>
 class Vector
 {
-    std::allocator<T> allocator;
-    size_t size_;
-    size_t capacity_;
-    T* elem;
 public:
+
+    typedef T                                     value_type;
+    typedef T &                                   reference;
+    typedef const T &                             const_reference;
+    typedef T *                                   pointer;
+    typedef const T *                             const_pointer;
+    typedef T *                                   iterator;
+    typedef const T *                             const_iterator;
+    typedef std::reverse_iterator<iterator>       reverse_iterator;
+    typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
+    typedef ptrdiff_t                             difference_type;
+    typedef unsigned int                          size_type;
+
     // Member functions
     Vector();
 // Vector() noexcept(noexcept(std::allocator<T>()));
@@ -26,7 +34,8 @@ public:
 // vector( size_t count, const T& value, const Allocator& alloc = Allocator());
     explicit Vector(size_t count);
 // explicit vector(size_t count, const Allocator& alloc = Allocator() );
-    Vector(T* first, T* last);
+    template< class InputIt >
+    Vector(InputIt first, InputIt last);
 // template< class InputIt > vector( InputIt first, InputIt last, const Allocator& alloc = Allocator() );
     Vector(const Vector& other);
 //vector(const Vector& other, const Allocator& alloc );
@@ -93,9 +102,11 @@ public:
     void resize(size_t count);
     void resize( size_t count, const T& value );
     void swap(Vector& other);
-
-    // Other
-    void reallocate();
+private:
+    std::allocator<T> allocator;
+    size_t size_;
+    size_t capacity_;
+    T* elem;
 };
 
 // Member functions
@@ -121,7 +132,8 @@ Vector<T>::Vector(size_t count) : size_{count}, capacity_{count}, elem{allocator
 {std::fill_n(elem,count,T());}
 
 template <typename T>
-Vector<T>::Vector(T* first, T* last) 
+template< class InputIt >
+Vector<T>::Vector(InputIt first, InputIt last) 
 {
     auto count = last - first;
     capacity_ = count;
