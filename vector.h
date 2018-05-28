@@ -14,12 +14,12 @@ class Vector
 {
 public:
 
-    typedef T  value_type;
-    typedef T &  reference;
-    typedef const T &  const_reference;
-    typedef T *  iterator;
-    typedef const T *  const_iterator;
-    typedef std::reverse_iterator<iterator>   reverse_iterator;
+    typedef T value_type;
+    typedef T & reference;
+    typedef const T & const_reference;
+    typedef T* iterator;
+    typedef const T* const_iterator;
+    typedef std::reverse_iterator<iterator> reverse_iterator;
     typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
     typedef size_t size_type;
     typedef std::allocator<T> allocator_type;
