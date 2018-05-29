@@ -15,8 +15,8 @@ class Vector
 public:
 
     typedef T value_type;
-    typedef T & reference;
-    typedef const T & const_reference;
+    typedef T& reference;
+    typedef const T& const_reference;
     typedef T* iterator;
     typedef const T* const_iterator;
     typedef std::reverse_iterator<iterator> reverse_iterator;
@@ -29,7 +29,7 @@ public:
 // Vector() noexcept(noexcept(std::allocator<T>()));
 // explicit Vector(const std::allocator<T>& alloc) noexcept;
     Vector(size_type count, const_reference val);
-// vector( size_t count, const T& value, const Allocator& alloc = Allocator());
+// vector( size_t count, const T& value, const std::allocator<T>& alloc = std::allocator<T>());
     explicit Vector(size_type count);
 // explicit vector(size_t count, const Allocator& alloc = Allocator() );
     template< class InputIt >
@@ -90,7 +90,7 @@ public:
     iterator insert(const_iterator pos, size_type count, const_reference value);
     iterator insert(const_iterator pos, T* first, T* last );
     iterator insert(const_iterator pos, std::initializer_list<T> ilist);
-    template <class Args> T* emplace(const_iterator, Args &&);
+    template <class Args> iterator emplace(const_iterator, Args &&);
     iterator erase(const_iterator pos);
     iterator erase(const_iterator first, const_iterator last);
     void push_back(const_reference value);
@@ -154,7 +154,7 @@ Vector<T>::Vector(Vector&& other) noexcept : elem{other.elem}, size_{other.size_
 }
 
 template<class T>
-Vector<T>::Vector(std::initializer_list<T>init) : size_{static_cast<size_t>(init.size())}, elem{allocator.allocate(init.size())}, capacity_{static_cast<size_t>(init.size())}
+Vector<T>::Vector(std::initializer_list<T>init) : size_{static_cast<size_t>(init.size())}, capacity_{static_cast<size_t>(init.size())}, elem{allocator.allocate(init.size())}
 {std::copy(init.begin(),init.end(),elem);}
 
 template<class T>
@@ -490,14 +490,21 @@ template <class Args>
 typename Vector<T>::iterator Vector<T>::emplace(const_iterator  pos, Args && args)
 {
     T* pos2 = &elem[pos - elem];
+    ++size_;
     if (size_ == capacity_) 
     {
         capacity_=capacity_ *2;
-        reserve(capacity_);
     }
-    std::copy(pos2-1, pos2+(size_-(pos-elem)), pos2);
+    T* elem2=allocator.allocate(capacity_);
+    auto i=0;
+    auto it=elem;
+    for (; it != pos2; i++, it++) {elem2[i]=elem[i];}
     allocator.construct(pos2,args);
-    ++size_;
+    for (; it != elem+size_; i++, it++) {elem2[i]=elem[i];}
+    for (size_t i = 0; i != size_; i++) {allocator.destroy(elem + i);}
+    allocator.deallocate(elem, capacity_);
+    elem=elem2;
+    elem2 = nullptr;
     return pos2;
 }
 

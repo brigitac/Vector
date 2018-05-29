@@ -17,6 +17,7 @@ int main()
     {
         V.push_back(i);
     }
+        V.emplace(V.begin()+5,10);
     std::cout << "class vector užpildyti užtruko: "
     << t.elapsed() << " s\n";
     std::cout << "std::vector size yra " << v.size()
